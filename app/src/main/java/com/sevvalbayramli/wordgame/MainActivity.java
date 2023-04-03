@@ -14,6 +14,11 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+=======
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         createFirstLetters();
         //createLetters();
         for (ImageButton image : imageButtonList) {//Burası LetterList içerindeki imageler dönücek şekilde düzeltilicek
@@ -36,6 +42,10 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
+
+        getSupportActionBar().hide();
+
+
     }
 
 
