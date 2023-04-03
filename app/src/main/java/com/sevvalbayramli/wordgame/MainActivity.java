@@ -26,9 +26,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //createFirstLetters();
-        createLetters();
-        for (ImageButton image : imageButtonList) {
+        createFirstLetters();
+        //createLetters();
+        for (ImageButton image : imageButtonList) {//Burası LetterList içerindeki imageler dönücek şekilde düzeltilicek
             image.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -42,21 +42,20 @@ public class MainActivity extends AppCompatActivity {
     public void createFirstLetters() {
         for (int i = 9; i > 6; i--) {
             for (int j = 0; j < 8; j++) {
-                ImageButton imageButton = new ImageButton(this);
                 //imageButton.setImageResource(createLetters());
                 Letter letter=createLetters();
-                letter.setImage(imageButton);
+
                 GridLayout gridLayout = findViewById(R.id.gridLayout);
-                gridLayout.addView(imageButton);
+                gridLayout.addView(letter.getImage());
                 GridLayout.LayoutParams params = new GridLayout.LayoutParams();
                 params.width = 135;
                 params.height = 135;
                 //params.rowSpec = GridLayout.spec(i);
                 params.columnSpec = GridLayout.spec(j);
                 params.setGravity(Gravity.CENTER);
-                imageButton.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                imageButton.setLayoutParams(params);
-                imageButtonList.add(imageButton);
+                letter.getImage().setScaleType(ImageView.ScaleType.CENTER_CROP);
+                letter.getImage().setLayoutParams(params);
+                imageButtonList.add(letter.getImage());
 
             }
         }
@@ -70,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
             if (fields[i].getName().length() < 3) {
                 try {
                     int resourceId = fields[i].getInt(null);
-                    System.out.println("deneme:" + fields[i].getName());
                     letters.add(resourceId);
                 } catch (Exception e) {
                 }
@@ -79,7 +77,10 @@ public class MainActivity extends AppCompatActivity {
         Random rand = new Random();
         int randomNumber = rand.nextInt(29);
         Letter letter=new Letter(harfler[randomNumber]);
+        ImageButton imageButton = new ImageButton(this);
+        letter.setImage(imageButton);
         letter.getImage().setImageResource(letters.get(randomNumber));
+        letterList.add(letter);
         return letter;
     }
 
