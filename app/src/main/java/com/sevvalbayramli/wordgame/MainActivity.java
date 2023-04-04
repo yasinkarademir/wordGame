@@ -14,7 +14,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-=======
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,9 +22,13 @@ import android.os.Handler;
 
 public class MainActivity extends AppCompatActivity {
 
-    List<Integer> letters = new ArrayList<Integer>();
+    List<Integer> letterİmages = new ArrayList<Integer>();
     List<Letter> letterList = new ArrayList<Letter>();
     List<ImageButton> imageButtonList = new ArrayList<ImageButton>();
+
+    int letterCount = 0;
+
+
 
     @SuppressLint("ResourceType")
     @Override
@@ -52,8 +56,9 @@ public class MainActivity extends AppCompatActivity {
     public void createFirstLetters() {
         for (int i = 9; i > 6; i--) {
             for (int j = 0; j < 8; j++) {
+
                 //imageButton.setImageResource(createLetters());
-                Letter letter=createLetters();
+                Letter letter = createLetters();
 
                 GridLayout gridLayout = findViewById(R.id.gridLayout);
                 gridLayout.addView(letter.getImage());
@@ -72,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+
     public Letter createLetters() {
         char[] harfler = {'a', 'b', 'c', 'ç', 'd', 'e', 'f', 'g', 'ğ', 'h', 'i', 'ı', 'j', 'k', 'l', 'm', 'n', 'o', 'ö', 'p', 'r', 's', 'ş', 't', 'u', 'ü', 'v', 'y', 'z'};
         Field[] fields = R.drawable.class.getFields();
@@ -79,19 +85,29 @@ public class MainActivity extends AppCompatActivity {
             if (fields[i].getName().length() < 3) {
                 try {
                     int resourceId = fields[i].getInt(null);
-                    letters.add(resourceId);
+                    letterİmages.add(resourceId);
                 } catch (Exception e) {
                 }
             }
         }
         Random rand = new Random();
         int randomNumber = rand.nextInt(29);
+        if(letterCount%7==0){
+            //sesli harf gönder
+        }
+        else {
+            //sessiz harf gönder
+        }
+
+
         Letter letter=new Letter(harfler[randomNumber]);
         ImageButton imageButton = new ImageButton(this);
         letter.setImage(imageButton);
-        letter.getImage().setImageResource(letters.get(randomNumber));
+        letter.getImage().setImageResource(letterİmages.get(randomNumber));
         letterList.add(letter);
         return letter;
     }
+
+
 
 }
