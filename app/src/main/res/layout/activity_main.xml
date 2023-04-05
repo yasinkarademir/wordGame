@@ -8,29 +8,19 @@
 
     <GridLayout
         android:id="@+id/gridLayout"
-        android:layout_width="413dp"
-        android:layout_height="159dp"
-        android:background="#292626"
+        android:layout_width="407dp"
+        android:layout_height="516dp"
         android:columnCount="8"
-        android:rowCount="3"
+        android:rowCount="10"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.333"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.774"><![CDATA[
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-
-        ]]>
-
-    </GridLayout>
+        app:layout_constraintVertical_bias="0.048" />
 
     <ImageButton
-        android:id="@+id/imageButton"
+        android:id="@+id/submit_button"
         android:layout_width="63dp"
         android:layout_height="60dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -42,7 +32,7 @@
         app:srcCompat="@android:drawable/checkbox_on_background" />
 
     <ImageButton
-        android:id="@+id/imageButton2"
+        android:id="@+id/cancel_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -57,7 +47,6 @@
         android:id="@+id/textView"
         android:layout_width="208dp"
         android:layout_height="38dp"
-        android:text="TextView"
         android:textAlignment="textStart"
         android:textSize="24sp"
         android:textStyle="bold"
