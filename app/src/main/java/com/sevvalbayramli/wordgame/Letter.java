@@ -1,12 +1,14 @@
 package com.sevvalbayramli.wordgame;
 
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
 public class Letter {
     private char letter;
-    private ImageButton image;
+    private ImageView image;
     private int row;
     private int column;
+    private boolean click;
 
     public Letter(char letter) {
         this.letter = letter;
@@ -20,11 +22,11 @@ public class Letter {
         this.letter = letter;
     }
 
-    public ImageButton getImage() {
+    public ImageView getImage() {
         return image;
     }
 
-    public void setImage(ImageButton image) {
+    public void setImage(ImageView image) {
         this.image = image;
     }
 
@@ -42,5 +44,13 @@ public class Letter {
 
     public void setColumn(int column) {
         this.column = column;
+    }
+
+    public boolean isClick() {
+        return click;
+    }
+
+    public void setClick(boolean click) {
+        this.click = click;
     }
 }
