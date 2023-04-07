@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 editText(textView);
+                deleteLetters();
 
 
             }
@@ -86,12 +87,16 @@ public class MainActivity extends AppCompatActivity {
                 GridLayout gridLayout = findViewById(R.id.gridLayout);
 
                 gridLayout.removeView(letter.getImage());
-                letterList.remove(letter);
+                letter.setClick(false);
+                //letterList.remove(letter); //hata verdi
+
             }
 
         }
 
     }
+
+
 
     public void editText(TextView textView){
         text="";
