@@ -40,12 +40,12 @@ public class MainActivity extends AppCompatActivity {
         ImageButton submit_button=findViewById(R.id.submit_button);
         getSupportActionBar().hide();
         createFirstLetters();
-        for (Letter letter : letterList) {//Burası LetterList içerindeki imageler dönücek şekilde düzeltilicek
+        for (Letter letter : letterList) {
             letter.getImage().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
-                    if(letter.isClick()==true){
+                    if(letter.isClick()){
                         text = text.replaceFirst(String.valueOf(letter.getLetter()), "");
                         textView.setText(text);
                         letter.getImage().setColorFilter(null);
@@ -73,10 +73,25 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 editText(textView);
 
+
             }
         });
 
 }
+
+    public void deleteLetters(){
+        for (Letter letter:letterList) {
+            if(letter.isClick()){
+                System.out.println("tıklandı: "+letter.getLetter());
+                GridLayout gridLayout = findViewById(R.id.gridLayout);
+
+                gridLayout.removeView(letter.getImage());
+                letterList.remove(letter);
+            }
+
+        }
+
+    }
 
     public void editText(TextView textView){
         text="";
