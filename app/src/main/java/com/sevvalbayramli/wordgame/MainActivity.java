@@ -27,7 +27,7 @@ import android.os.Handler;
 
 public class MainActivity extends AppCompatActivity {
 
-    List<Integer> letterİmages = new ArrayList<Integer>();
+    List<Integer> letters = new ArrayList<Integer>();
     List<Letter> letterList = new ArrayList<Letter>();
 
 
