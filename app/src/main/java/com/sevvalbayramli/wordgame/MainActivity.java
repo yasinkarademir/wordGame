@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
     List<Integer> letters = new ArrayList<Integer>();
     List<Letter> letterList = new ArrayList<Letter>();
+    int[] colCount = {7,7,7,7,7,7,7};
 
 
     String text="";
@@ -45,6 +46,11 @@ public class MainActivity extends AppCompatActivity {
         ImageButton submit_button=findViewById(R.id.submit_button);
         getSupportActionBar().hide();
         createFirstLetters();
+        dropLetter();
+
+
+
+
 
 
         for (Letter letter : letterList) {
@@ -72,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         cancel_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 editText(textView);
             }
         });
@@ -85,7 +92,62 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+
 }
+
+    public void dropLetter(){//itemler 0dan başlayıp düşüyor
+        //ama başladığında hızlı düştüğü için düşüş anı yok
+
+        Letter letter=createOneLetter();
+        GridLayout gridLayout = findViewById(R.id.gridLayout);
+        for(int i=0;i<colCount[letter.getColumn()];i++){
+
+                gridLayout.removeView(letter.getImage());
+
+                GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+                params.width = 135;
+                params.height = 135;
+                params.rowSpec = GridLayout.spec(i);
+                params.columnSpec = GridLayout.spec(letter.getColumn());
+                params.setGravity(Gravity.CENTER);
+                letter.getImage().setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+                gridLayout.addView(letter.getImage(),params);
+                int newIndex=(i)*gridLayout.getColumnCount() +letter.getColumn();
+
+                letter.getImage().setId(newIndex);
+                updateLetters(letter);
+                letter.setRow(i);
+                letter.setColumn(letter.getColumn());
+
+        }
+        colCount[letter.getColumn()]=colCount[letter.getColumn()]+1;
+
+
+    }
+
+    public Letter createOneLetter(){
+        Letter letter=createLetters();
+
+        GridLayout gridLayout = findViewById(R.id.gridLayout);
+        GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+        Random rand = new Random();
+        int col = rand.nextInt(8);
+        //int row = rand.nextInt(7);
+        params.width = 135;
+        params.height = 135;
+        params.rowSpec = GridLayout.spec(0);
+        params.columnSpec = GridLayout.spec(col);
+        params.setGravity(Gravity.CENTER);
+        letter.getImage().setScaleType(ImageView.ScaleType.CENTER_CROP);
+        letter.setRow(0);
+        letter.setColumn(col);
+        int index=0 * gridLayout.getColumnCount() + col;
+        letter.getImage().setId(index);
+        gridLayout.addView(letter.getImage(),params);
+        return letter;
+    }
 
     public void updateLetters(Letter letter){//üsttekini bulup siliyor
 
