@@ -20,14 +20,20 @@ import java.util.Random;
 import android.widget.TextView;
 
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+
 
 public class MainActivity extends AppCompatActivity {
 
-    List<Integer> letters = new ArrayList<Integer>();
+    List<Integer> letterİmages = new ArrayList<Integer>();
     List<Letter> letterList = new ArrayList<Letter>();
 
 
     String text="";
+
+
 
     @SuppressLint("ResourceType")
     @Override
@@ -169,6 +175,7 @@ public class MainActivity extends AppCompatActivity {
 
         for (int i = 9; i > 6; i--) {
             for (int j = 0; j < 8; j++) {
+
                 Letter letter=createLetters();
 
                 GridLayout gridLayout = findViewById(R.id.gridLayout);
@@ -193,6 +200,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
     public Letter createLetters() {
         char[] harfler = {'a', 'b', 'c', 'ç', 'd', 'e', 'f', 'g', 'ğ', 'h', 'i', 'ı', 'j', 'k', 'l', 'm', 'n', 'o', 'ö', 'p', 'r', 's', 'ş', 't', 'u', 'ü', 'v', 'y', 'z'};
         Field[] fields = R.drawable.class.getFields();
@@ -214,5 +222,7 @@ public class MainActivity extends AppCompatActivity {
         letterList.add(letter);
         return letter;
     }
+
+
 
 }
