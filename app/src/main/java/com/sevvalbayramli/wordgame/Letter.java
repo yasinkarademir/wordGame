@@ -10,9 +10,6 @@ public class Letter {
     private int column;
     private boolean click;
 
-    public Letter(ImageView image) {
-        this.image = image;
-    }
     public Letter(char letter) {
         this.letter = letter;
     }
