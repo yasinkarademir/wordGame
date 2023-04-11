@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     String text = "";
-
+    int userPoint=0;
 
     @SuppressLint("ResourceType")
     @Override
@@ -77,19 +77,14 @@ public class MainActivity extends AppCompatActivity {
                 if (wordSet.contains(text.toLowerCase())) {
                     System.out.println("Evet var");
                     editText(textView);
+
                     deleteLetters();
                 } else {
                     System.out.println("Hayır yok");
-                    GridLayout gridLayout = findViewById(R.id.gridLayout);
-
 
                     createOneLetter();
                     clickControl();
 
-                    /*
-                    Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.move_down);
-                    Letter child=createOneLetter();
-                    child.getImage().startAnimation(animation);*/
 
                 }
 
@@ -103,7 +98,6 @@ public class MainActivity extends AppCompatActivity {
     private void clickControl() {
         TextView textView = findViewById(R.id.textView);
         for (Letter letter : letterList) {
-            System.out.println("letter: "+letter.getLetter());
             letter.getImage().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -112,13 +106,16 @@ public class MainActivity extends AppCompatActivity {
                         text = text.replaceFirst(String.valueOf(letter.getLetter()), "");
                         textView.setText(text);
                         letter.getImage().setColorFilter(null);
+                        userPoint=userPoint-letter.getPoint();
                         letter.setClick(false);
                     } else {
                         text = text + letter.getLetter();
                         textView.setText(text);
                         addFilter(letter.getImage());
+                        userPoint=userPoint+letter.getPoint();
                         letter.setClick(true);
                     }
+                    System.out.println("point: "+userPoint);
                 }
             });
         }
@@ -147,8 +144,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-
 
     public void dropLetter() {
         //itemler 0dan başlayıp düşüyor
@@ -189,43 +184,26 @@ public class MainActivity extends AppCompatActivity {
         GridLayout.LayoutParams params = new GridLayout.LayoutParams();
         Random rand = new Random();
         int col = rand.nextInt(8);
-        boolean flag=false;
-        while(colCount[col]<0){
-            col = rand.nextInt(8);
-            int k=0;
-            for(int i=0;i<colCount.length;i++){
-                if(colCount[i]<0){
-                    k++;
-                }
-            }
-            if(k>7){
-                System.out.println("oyun bitti");
-                flag=true;
-                break;
-            }
+        params.width = 135;
+        params.height = 135;
+        params.rowSpec = GridLayout.spec(colCount[col]);
+
+        params.columnSpec = GridLayout.spec(col);
+        params.setGravity(Gravity.CENTER);
+        letter.getImage().setScaleType(ImageView.ScaleType.CENTER_CROP);
+        letter.setRow(colCount[col]);
+        letter.setColumn(col);
+        int index = colCount[col] * gridLayout.getColumnCount() + col;
+        letter.getImage().setId(index);
+        gridLayout.addView(letter.getImage(), params);
+        colCount[col]--;
+
+        createAnimation(letter);
+
+        if(colCount[col]<0){
+            System.out.println("oyun bitti3");
         }
-        if(flag){
 
-        }else {
-            params.width = 135;
-            params.height = 135;
-            params.rowSpec = GridLayout.spec(colCount[col]);
-
-            System.out.println("colCount:" + colCount[col] + " col: " + col);
-            params.columnSpec = GridLayout.spec(col);
-            params.setGravity(Gravity.CENTER);
-            letter.getImage().setScaleType(ImageView.ScaleType.CENTER_CROP);
-            letter.setRow(colCount[col]);
-            letter.setColumn(col);
-            int index = colCount[col] * gridLayout.getColumnCount() + col;
-            letter.getImage().setId(index);
-            gridLayout.addView(letter.getImage(), params);
-            colCount[col]--;
-
-            createAnimation(letter);
-
-
-        }
         return letter;
     }
 
@@ -352,6 +330,7 @@ public class MainActivity extends AppCompatActivity {
 
     public Letter createLetters() {
         char[] harfler = {'a', 'b', 'c', 'ç', 'd', 'e', 'f', 'g', 'ğ', 'h', 'i', 'ı', 'j', 'k', 'l', 'm', 'n', 'o', 'ö', 'p', 'r', 's', 'ş', 't', 'u', 'ü', 'v', 'y', 'z'};
+        int[] point={1,3,4,4,3,1,7,5,8,5,2,1,10,1,1,2,1,2,7,5,1,2,4,1,2,3,7,3,4};
         Field[] fields = R.drawable.class.getFields();
         for (int i = 0; i < fields.length; i++) {
             if (fields[i].getName().length() < 3) {
@@ -368,6 +347,7 @@ public class MainActivity extends AppCompatActivity {
         ImageView imageView = new ImageView(this);
         letter.setImage(imageView);
         letter.getImage().setImageResource(letters.get(randomNumber));
+        letter.setPoint(point[randomNumber]);
         letterList.add(letter);
         return letter;
     }

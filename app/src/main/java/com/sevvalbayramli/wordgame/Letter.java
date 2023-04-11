@@ -9,6 +9,7 @@ public class Letter {
     private int row;
     private int column;
     private boolean click;
+    private int point;
 
     public Letter(char letter) {
         this.letter = letter;
@@ -52,5 +53,13 @@ public class Letter {
 
     public void setClick(boolean click) {
         this.click = click;
+    }
+
+    public int getPoint() {
+        return point;
+    }
+
+    public void setPoint(int point) {
+        this.point = point;
     }
 }
