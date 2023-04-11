@@ -13,10 +13,16 @@ import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
+
 import android.widget.TextView;
 
 
@@ -29,11 +35,12 @@ public class MainActivity extends AppCompatActivity {
 
     List<Integer> letters = new ArrayList<Integer>();
     List<Letter> letterList = new ArrayList<Letter>();
-    int[] colCount = {7,7,7,7,7,7,7};
+
+    private Set<String> wordSet;
+    int[] colCount = {7, 7, 7, 7, 7, 7, 7};
 
 
-    String text="";
-
+    String text = "";
 
 
     @SuppressLint("ResourceType")
@@ -41,16 +48,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        TextView textView=findViewById(R.id.textView);
-        ImageButton cancel_button=findViewById(R.id.cancel_button);
-        ImageButton submit_button=findViewById(R.id.submit_button);
+        TextView textView = findViewById(R.id.textView);
+        ImageButton cancel_button = findViewById(R.id.cancel_button);
+        ImageButton submit_button = findViewById(R.id.submit_button);
+        loadWords();
         getSupportActionBar().hide();
+
         createFirstLetters();
         dropLetter();
-
-
-
-
 
 
         for (Letter letter : letterList) {
@@ -58,13 +63,13 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
 
-                    if(letter.isClick()){
+                    if (letter.isClick()) {
                         text = text.replaceFirst(String.valueOf(letter.getLetter()), "");
                         textView.setText(text);
                         letter.getImage().setColorFilter(null);
                         letter.setClick(false);
-                    }else{
-                        text=text+letter.getLetter();
+                    } else {
+                        text = text + letter.getLetter();
                         textView.setText(text);
                         addFilter(letter.getImage());
                         letter.setClick(true);
@@ -74,61 +79,91 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-
         cancel_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 editText(textView);
+
+
             }
         });
         submit_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                editText(textView);
-                deleteLetters();
+                if (wordSet.contains(text.toLowerCase())) {
+                    System.out.println("Evet var");
+                    editText(textView);
+                    deleteLetters();
+                } else {
+                    System.out.println("Hayır yok");
+                }
 
 
             }
         });
 
 
+    }
 
-}
 
-    public void dropLetter(){//itemler 0dan başlayıp düşüyor
+    private void loadWords() {
+        wordSet = new HashSet<>();
+        BufferedReader reader = null;
+
+        try {
+            reader = new BufferedReader(new InputStreamReader(getAssets().open("kelimeler.txt"), "UTF-8"));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                wordSet.add(line.trim());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+
+    public void dropLetter() {//itemler 0dan başlayıp düşüyor
         //ama başladığında hızlı düştüğü için düşüş anı yok
 
-        Letter letter=createOneLetter();
+        Letter letter = createOneLetter();
         GridLayout gridLayout = findViewById(R.id.gridLayout);
-        for(int i=0;i<colCount[letter.getColumn()];i++){
+        for (int i = 0; i < colCount[letter.getColumn()]; i++) {
 
-                gridLayout.removeView(letter.getImage());
+            gridLayout.removeView(letter.getImage());
 
-                GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-                params.width = 135;
-                params.height = 135;
-                params.rowSpec = GridLayout.spec(i);
-                params.columnSpec = GridLayout.spec(letter.getColumn());
-                params.setGravity(Gravity.CENTER);
-                letter.getImage().setScaleType(ImageView.ScaleType.CENTER_CROP);
+            GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+            params.width = 135;
+            params.height = 135;
+            params.rowSpec = GridLayout.spec(i);
+            params.columnSpec = GridLayout.spec(letter.getColumn());
+            params.setGravity(Gravity.CENTER);
+            letter.getImage().setScaleType(ImageView.ScaleType.CENTER_CROP);
 
-                gridLayout.addView(letter.getImage(),params);
-                int newIndex=(i)*gridLayout.getColumnCount() +letter.getColumn();
+            gridLayout.addView(letter.getImage(), params);
+            int newIndex = (i) * gridLayout.getColumnCount() + letter.getColumn();
 
-                letter.getImage().setId(newIndex);
-                updateLetters(letter);
-                letter.setRow(i);
-                letter.setColumn(letter.getColumn());
+            letter.getImage().setId(newIndex);
+            updateLetters(letter);
+            letter.setRow(i);
+            letter.setColumn(letter.getColumn());
 
         }
-        colCount[letter.getColumn()]=colCount[letter.getColumn()]+1;
+        colCount[letter.getColumn()] = colCount[letter.getColumn()] + 1;
 
 
     }
 
-    public Letter createOneLetter(){
-        Letter letter=createLetters();
+    public Letter createOneLetter() {
+        Letter letter = createLetters();
 
         GridLayout gridLayout = findViewById(R.id.gridLayout);
         GridLayout.LayoutParams params = new GridLayout.LayoutParams();
@@ -143,28 +178,28 @@ public class MainActivity extends AppCompatActivity {
         letter.getImage().setScaleType(ImageView.ScaleType.CENTER_CROP);
         letter.setRow(0);
         letter.setColumn(col);
-        int index=0 * gridLayout.getColumnCount() + col;
+        int index = 0 * gridLayout.getColumnCount() + col;
         letter.getImage().setId(index);
-        gridLayout.addView(letter.getImage(),params);
+        gridLayout.addView(letter.getImage(), params);
         return letter;
     }
 
-    public void updateLetters(Letter letter){//üsttekini bulup siliyor
+    public void updateLetters(Letter letter) {//üsttekini bulup siliyor
 
         GridLayout gridLayout = findViewById(R.id.gridLayout);
 
-        int index=(letter.getRow()-1)*gridLayout.getColumnCount() +letter.getColumn();
+        int index = (letter.getRow() - 1) * gridLayout.getColumnCount() + letter.getColumn();
         ImageView imageView = findViewById(index);
         Letter newLetter = null;
-        for(Letter findLetter:letterList){
-            if(findLetter.getImage()==imageView){
-                newLetter=findLetter;//Bu imageviewın sahibi olan letter ı bulkuk
+        for (Letter findLetter : letterList) {
+            if (findLetter.getImage() == imageView) {
+                newLetter = findLetter;//Bu imageviewın sahibi olan letter ı bulkuk
             }
         }
-        if(imageView==null){
+        if (imageView == null) {
 
-        }else{
-            System.out.println("girdi: "+newLetter.getLetter());
+        } else {
+            System.out.println("girdi: " + newLetter.getLetter());
             gridLayout.removeView(imageView);
 
             GridLayout.LayoutParams params = new GridLayout.LayoutParams();
@@ -175,8 +210,8 @@ public class MainActivity extends AppCompatActivity {
             params.setGravity(Gravity.CENTER);
             newLetter.getImage().setScaleType(ImageView.ScaleType.CENTER_CROP);
 
-            gridLayout.addView(newLetter.getImage(),params);
-            int newIndex=(letter.getRow())*gridLayout.getColumnCount() +letter.getColumn();
+            gridLayout.addView(newLetter.getImage(), params);
+            int newIndex = (letter.getRow()) * gridLayout.getColumnCount() + letter.getColumn();
             //newLetter.setRow(letter.getRow());
             //newLetter.setColumn(letter.getColumn());
             newLetter.getImage().setId(newIndex);
@@ -188,9 +223,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void deleteLetters(){
-        for (Letter letter:letterList) {
-            if(letter.isClick()){
+    public void deleteLetters() {
+        for (Letter letter : letterList) {
+            if (letter.isClick()) {
                 GridLayout gridLayout = findViewById(R.id.gridLayout);
 
                 gridLayout.removeView(letter.getImage());
@@ -201,17 +236,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void editText(TextView textView){
-        text="";
+    public void editText(TextView textView) {
+        text = "";
         textView.setText(text);
 
     }
 
-    public void addFilter(ImageView imageView){
+    public void addFilter(ImageView imageView) {
         ColorMatrix colorMatrix = new ColorMatrix();
         colorMatrix.setSaturation(0); // Renk doygunluğunu kaldırarak siyah-beyaz görüntü sağlar
         colorMatrix.setScale(1f, 1f, 1f, 1f); // Sadece mavi rengini korur, diğer renkleri kaldırır
-        colorMatrix.postConcat(new ColorMatrix(new float[] {
+        colorMatrix.postConcat(new ColorMatrix(new float[]{
                 0f, 0f, 1f, 0f, 0f, // Red
                 0f, 0f, 1f, 0f, 0f, // Green
                 0f, 0f, 1f, 0f, 0f, // Blue
@@ -225,20 +260,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void createFirstLetters() {
-        for (int i = 0; i <80 ; i++) {
+        for (int i = 0; i < 80; i++) {
             GridLayout gridLayout = findViewById(R.id.gridLayout);
-            ImageView image=new ImageView(this);
+            ImageView image = new ImageView(this);
             GridLayout.LayoutParams params = new GridLayout.LayoutParams();
             params.width = 135;
             params.height = 135;
             params.setGravity(Gravity.CENTER);
-            gridLayout.addView(image,params);
+            gridLayout.addView(image, params);
         }
 
         for (int i = 9; i > 6; i--) {
             for (int j = 0; j < 8; j++) {
 
-                Letter letter=createLetters();
+                Letter letter = createLetters();
 
                 GridLayout gridLayout = findViewById(R.id.gridLayout);
 
@@ -247,21 +282,39 @@ public class MainActivity extends AppCompatActivity {
                 params.height = 135;
                 params.rowSpec = GridLayout.spec(i);
                 params.columnSpec = GridLayout.spec(j);
-                System.out.println("row:"+i+" column:"+j);
+                System.out.println("row:" + i + " column:" + j);
                 params.setGravity(Gravity.CENTER);
                 letter.getImage().setScaleType(ImageView.ScaleType.CENTER_CROP);
                 //letter.getImage().setLayoutParams(params);
                 letter.setRow(i);
                 letter.setColumn(j);
-                int index=i * gridLayout.getColumnCount() + j;
+                int index = i * gridLayout.getColumnCount() + j;
                 letter.getImage().setId(index);
-                gridLayout.addView(letter.getImage(),params);
+                gridLayout.addView(letter.getImage(), params);
 
             }
         }
 
     }
 
+    private void dropLettersInSequence() {
+        final Handler handler = new Handler();
+        final int delay = 200; // 200 ms'lik gecikmeyle harfler düşecek
+
+        handler.post(new Runnable() {
+            int iteration = 0;
+            @Override
+            public void run() {
+                if (iteration < 8 * 4) { // 4 satır, her satırda 8 harf olacak şekilde
+                    if (iteration % 8 == 0) {
+                        dropLetter();
+                    }
+                    iteration++;
+                    handler.postDelayed(this, delay);
+                }
+            }
+        });
+    }
 
     public Letter createLetters() {
         char[] harfler = {'a', 'b', 'c', 'ç', 'd', 'e', 'f', 'g', 'ğ', 'h', 'i', 'ı', 'j', 'k', 'l', 'm', 'n', 'o', 'ö', 'p', 'r', 's', 'ş', 't', 'u', 'ü', 'v', 'y', 'z'};
@@ -277,14 +330,13 @@ public class MainActivity extends AppCompatActivity {
         }
         Random rand = new Random();
         int randomNumber = rand.nextInt(29);
-        Letter letter=new Letter(harfler[randomNumber]);
+        Letter letter = new Letter(harfler[randomNumber]);
         ImageView imageView = new ImageView(this);
         letter.setImage(imageView);
         letter.getImage().setImageResource(letters.get(randomNumber));
         letterList.add(letter);
         return letter;
     }
-
 
 
 }
