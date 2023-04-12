@@ -28,8 +28,6 @@ import java.util.Set;
 import android.widget.TextView;
 
 
-import android.content.Intent;
-import android.os.Bundle;
 import android.os.Handler;
 
 
@@ -51,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         TextView textView = findViewById(R.id.textView);
+        TextView pointText = findViewById(R.id.pointText);
         ImageButton cancel_button = findViewById(R.id.cancel_button);
         ImageButton submit_button = findViewById(R.id.submit_button);
         loadWords();
@@ -59,16 +58,15 @@ public class MainActivity extends AppCompatActivity {
         createFirstLetters();
         clickControl();
 
+        createNewItemPeriodically(500);
+
 
 
 
         cancel_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 editText(textView);
-
-
             }
         });
         submit_button.setOnClickListener(new View.OnClickListener() {
@@ -77,13 +75,14 @@ public class MainActivity extends AppCompatActivity {
                 if (wordSet.contains(text.toLowerCase())) {
                     System.out.println("Evet var");
                     editText(textView);
+                    String point=String.valueOf(userPoint);
+                    pointText.setText(point);
 
                     deleteLetters();
                 } else {
                     System.out.println("Hayır yok");
 
-                    createOneLetter();
-                    clickControl();
+
 
 
                 }
@@ -93,6 +92,17 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+    }
+    public void createNewItemPeriodically(int delay) {
+        final Handler handler = new Handler();
+
+        handler.postDelayed(new Runnable(){
+            public void run(){
+                createOneLetter();
+                clickControl();
+                handler.postDelayed(this, delay);
+            }
+        }, delay);
     }
 
     private void clickControl() {
@@ -195,16 +205,27 @@ public class MainActivity extends AppCompatActivity {
         letter.setColumn(col);
         int index = colCount[col] * gridLayout.getColumnCount() + col;
         letter.getImage().setId(index);
-        gridLayout.addView(letter.getImage(), params);
         colCount[col]--;
-
-        createAnimation(letter);
-
         if(colCount[col]<0){
             System.out.println("oyun bitti3");
-        }
 
-        return letter;
+            //burada skor sayfasına gidicek
+            //skor sayfasında tekrar başlama seçeneği olucak
+        }
+        else{
+            gridLayout.addView(letter.getImage(), params);
+            createAnimation(letter);
+            return letter;
+        }
+        return null;
+
+
+
+
+
+
+
+
     }
 
     public void createAnimation(Letter letter){
@@ -310,13 +331,12 @@ public class MainActivity extends AppCompatActivity {
                 GridLayout gridLayout = findViewById(R.id.gridLayout);
 
                 GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-                params.width = 135;
-                params.height = 135;
+                params.width = 125;
+                params.height = 125;
                 params.rowSpec = GridLayout.spec(i);
                 params.columnSpec = GridLayout.spec(j);
-                System.out.println("row:" + i + " column:" + j);
-                params.setGravity(Gravity.CENTER);
-                letter.getImage().setScaleType(ImageView.ScaleType.CENTER_CROP);
+                //params.setGravity(Gravity.CENTER);
+                //letter.getImage().setScaleType(ImageView.ScaleType.CENTER_CROP);
                 letter.setRow(i);
                 letter.setColumn(j);
                 int index = i * gridLayout.getColumnCount() + j;

@@ -9,26 +9,26 @@
 
     <GridLayout
         android:id="@+id/gridLayout"
-        android:layout_width="407dp"
-        android:layout_height="516dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:columnCount="8"
         android:rowCount="10"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.195" />
+        app:layout_constraintVertical_bias="0.351" />
 
     <ImageButton
         android:id="@+id/submit_button"
-        android:layout_width="63dp"
-        android:layout_height="60dp"
+        android:layout_width="67dp"
+        android:layout_height="44dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.954"
+        app:layout_constraintHorizontal_bias="0.953"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.983"
+        app:layout_constraintVertical_bias="0.978"
         app:srcCompat="@android:drawable/checkbox_on_background" />
 
     <ImageButton
@@ -56,5 +56,27 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.969" />
+
+
+    <TextView
+        android:id="@+id/pointText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.954"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.044"
+
+        android:textStyle="bold"
+        android:fontFamily="sans-serif-light"
+        android:background="#FFA500"
+        android:textSize="24sp"
+        android:shadowColor="#000000"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
