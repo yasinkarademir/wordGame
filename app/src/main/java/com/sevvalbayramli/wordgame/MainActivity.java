@@ -37,18 +37,16 @@ public class MainActivity extends AppCompatActivity {
     List<Integer> letters = new ArrayList<Integer>();
     List<Letter> letterList = new ArrayList<Letter>();
     Handler handler = new Handler();
-    Runnable myRunnable;
 
     private Set<String> wordSet;
     int[] colCount = {6, 6, 6, 6, 6, 6, 6, 6};
 
 
     String text = "";
-    int userPoint=0;
-    String point="0";
-    boolean flag=true;
-    int falseWord=0;
-
+    int userPoint = 0;
+    String point = "0";
+    boolean flag = true;
+    int falseWord = 0;
 
 
     @SuppressLint("ResourceType")
@@ -81,17 +79,15 @@ public class MainActivity extends AppCompatActivity {
                 if (wordSet.contains(text.toLowerCase())) {
                     System.out.println("Evet var");
                     editText(textView);
-                    point=String.valueOf(userPoint);
+                    point = String.valueOf(userPoint);
                     pointText.setText(point);
 
                     deleteLetters();
                 } else {
                     falseWord++;
-                    if(falseWord%3==0 && falseWord!=0){
-                        System.out.println("Tüm sütunlara harfler iner");
+                    if (falseWord % 3 == 0 && falseWord != 0) {
+                        createLettersForAllColumns();
                     }
-
-
 
 
                 }
@@ -101,35 +97,63 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void pointControl(){
-        if(userPoint >100 && userPoint <=200){
+    public List<Letter> createLettersForAllColumns() {
+        List<Letter> letters = new ArrayList<>();
+        for (int col = 0; col < 8; col++) {
+            Letter letter = createLetters();
+            GridLayout gridLayout = findViewById(R.id.gridLayout);
+            GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+            if (colCount[col] >= 0) {
+                params.width = 135;
+                params.height = 135;
+                params.rowSpec = GridLayout.spec(colCount[col]);
+                System.out.println("colCount:" + colCount[col] + " col: " + col);
+                params.columnSpec = GridLayout.spec(col);
+                params.setGravity(Gravity.CENTER);
+                letter.getImage().setScaleType(ImageView.ScaleType.CENTER_CROP);
+                letter.setRow(colCount[col]);
+                letter.setColumn(col);
+                int index = colCount[col] * gridLayout.getColumnCount() + col;
+                letter.getImage().setId(index);
+                gridLayout.addView(letter.getImage(), params);
+                colCount[col]--;
+                createAnimation(letter);
+                letters.add(letter);
+            } else {
+                System.out.println("Sütun dolu: " + col);
+            }
+        }
+        return letters;
+    }
+
+    public void pointControl() {
+        if (userPoint > 100 && userPoint <= 200) {
             stopItem();
             createNewItemPeriodically(4000);
-        }else if(userPoint>200 && userPoint <= 300){
+        } else if (userPoint > 200 && userPoint <= 300) {
             stopItem();
             createNewItemPeriodically(3000);
-        }else if(userPoint>300 && userPoint <= 400){
+        } else if (userPoint > 300 && userPoint <= 400) {
             stopItem();
             createNewItemPeriodically(2000);
-        }else if(userPoint>300 && userPoint <= 400){
+        } else if (userPoint > 300 && userPoint <= 400) {
             stopItem();
             createNewItemPeriodically(1000);
         }
     }
 
-    public void stopItem(){
+    public void stopItem() {
         handler.removeCallbacksAndMessages(null);
     }
 
     public void createNewItemPeriodically(int delay) {
 
-        handler.postDelayed(new Runnable(){
-            public void run(){
-                if(flag){
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                if (flag) {
                     createOneLetter();
                     handler.postDelayed(this, delay);
-                }
-                else{
+                } else {
                     stopItem();
                 }
             }
@@ -149,16 +173,16 @@ public class MainActivity extends AppCompatActivity {
                         text = text.replaceFirst(String.valueOf(letter.getLetter()), "");
                         textView.setText(text);
                         letter.getImage().setColorFilter(null);
-                        userPoint=userPoint-letter.getPoint();
+                        userPoint = userPoint - letter.getPoint();
                         letter.setClick(false);
                     } else {
                         text = text + letter.getLetter();
                         textView.setText(text);
                         addFilter(letter.getImage());
-                        userPoint=userPoint+letter.getPoint();
+                        userPoint = userPoint + letter.getPoint();
                         letter.setClick(true);
                     }
-                    System.out.println("point: "+userPoint);
+                    System.out.println("point: " + userPoint);
                 }
             });
         }
@@ -209,15 +233,14 @@ public class MainActivity extends AppCompatActivity {
         colCount[col]--;
 
         clickControl();
-        if(colCount[col]<=-1){
-            System.out.println("oyun bitti "+colCount[col]);
-            flag=false;
-            Intent intent=new Intent(this, InfoPage.class);
+        if (colCount[col] <= -1) {
+            System.out.println("oyun bitti " + colCount[col]);
+            flag = false;
+            Intent intent = new Intent(this, InfoPage.class);
             intent.putExtra("score", point);
             startActivity(intent);
             return null;
-        }
-        else{
+        } else {
             gridLayout.addView(letter.getImage(), params);
             createAnimation(letter);
             pointControl();
@@ -225,16 +248,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-
-
-
-
-
-
-
     }
 
-    public void createAnimation(Letter letter){
+    public void createAnimation(Letter letter) {
         //bir saniye aralıklarla belirtilen konumda yeni bir harf oluşturuyor
         final Handler handler = new Handler();
         final int delay = 1000; // 1 saniyelik gecikme
@@ -245,11 +261,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public Letter findLetter(int a,Letter letter){
+    public Letter findLetter(int a, Letter letter) {
         GridLayout gridLayout = findViewById(R.id.gridLayout);
-        int index = (letter.getRow() +a) * gridLayout.getColumnCount() + letter.getColumn();
+        int index = (letter.getRow() + a) * gridLayout.getColumnCount() + letter.getColumn();
         ImageView imageView = findViewById(index);
-        if(imageView==null){
+        if (imageView == null) {
             return null;
         }
         Letter newLetter = null;
@@ -265,10 +281,10 @@ public class MainActivity extends AppCompatActivity {
     public void updateLetters(Letter letter) {//üsttekini bulup siliyor
 
         GridLayout gridLayout = findViewById(R.id.gridLayout);
-        Letter newLetter=findLetter(-1,letter);
+        Letter newLetter = findLetter(-1, letter);
 
-        if (newLetter == null ) {}
-        else {
+        if (newLetter == null) {
+        } else {
             System.out.println("girdi: " + newLetter.getLetter());
             gridLayout.removeView(newLetter.getImage());
 
@@ -366,7 +382,7 @@ public class MainActivity extends AppCompatActivity {
 
     public Letter createLetters() {
         char[] harfler = {'a', 'b', 'c', 'ç', 'd', 'e', 'f', 'g', 'ğ', 'h', 'i', 'ı', 'j', 'k', 'l', 'm', 'n', 'o', 'ö', 'p', 'r', 's', 'ş', 't', 'u', 'ü', 'v', 'y', 'z'};
-        int[] point={1,3,4,4,3,1,7,5,8,5,2,1,10,1,1,2,1,2,7,5,1,2,4,1,2,3,7,3,4};
+        int[] point = {1, 3, 4, 4, 3, 1, 7, 5, 8, 5, 2, 1, 10, 1, 1, 2, 1, 2, 7, 5, 1, 2, 4, 1, 2, 3, 7, 3, 4};
         Field[] fields = R.drawable.class.getFields();
         for (int i = 0; i < fields.length; i++) {
             if (fields[i].getName().length() < 3) {
