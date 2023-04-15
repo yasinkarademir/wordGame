@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     String point = "0";
     boolean flag = true;
     int falseWord = 0;
-    int iceCount=0;
+    int iceCount = 0;
 
 
     @SuppressLint("ResourceType")
@@ -73,6 +73,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 editText(textView);
+
+                //Burada tüm harflerin rengini sıfırlıyorum
+                for (Letter letter : letterList) {
+                    letter.getImage().setColorFilter(null);
+                    letter.setClick(false);
+                }
 
 
             }
@@ -214,29 +220,55 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void iceLetterControl(Letter letter){
-        if(iceCount%15==0 && iceCount!=0){
+    public void iceLetterControl(Letter letter) {
+        if (letter == null) {
+            return;
+        }
+
+        if (iceCount % 15 == 0 && iceCount != 0) {
             letter.setIce(true);
             addBlackFilter(letter.getImage());
-            Letter newLetter=findLetter(+1,letter);//altındakini bulur
+            Letter newLetter = findLetter(+1, letter); // altındakini bulur
+            if (newLetter != null) {
+                newLetter.setIce(true);
+                addBlackFilter(newLetter.getImage());
+            }
+        } else {
+            Letter newLetter = findLetter(+1, letter); // altındakini bulur
+            if (newLetter != null && newLetter.isIce()) {
+                letter.setIce(true);
+                addBlackFilter(letter.getImage());
+            }
+        }
+    }
+
+
+    // aşağıdaki kod null pointer exception veriyor. düzenlenmiş halini yukarıda yazdım.
+    /*
+    public void iceLetterControl(Letter letter) {
+        if (iceCount % 15 == 0 && iceCount != 0) {
+            letter.setIce(true);
+            addBlackFilter(letter.getImage());
+            Letter newLetter = findLetter(+1, letter);//altındakini bulur
             newLetter.setIce(true);
             addBlackFilter(newLetter.getImage());
-        }else{
-            Letter newLetter=findLetter(+1,letter);//altındakini bulur
-            if(newLetter.isIce()==true){
+        } else {
+            Letter newLetter = findLetter(+1, letter);//altındakini bulur
+            if (newLetter.isIce() == true) {
                 letter.setIce(true);
                 addBlackFilter(letter.getImage());
             }
 
         }
     }
+     */
     public void addBlackFilter(ImageView imageView) {
         Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
         Bitmap blackAndWhiteBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
 
-        for(int i=0; i<bitmap.getWidth(); i++) {
-            for(int j=0; j<bitmap.getHeight(); j++) {
-                int pixel = bitmap.getPixel(i,j);
+        for (int i = 0; i < bitmap.getWidth(); i++) {
+            for (int j = 0; j < bitmap.getHeight(); j++) {
+                int pixel = bitmap.getPixel(i, j);
                 int red = Color.red(pixel);
                 int green = Color.green(pixel);
                 int blue = Color.blue(pixel);
@@ -349,7 +381,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void deleteLetters() {
         for (Letter letter : letterList) {
-            if (letter.isClick() && letter.isIce()!=true) {
+            if (letter.isClick() && letter.isIce() != true) {
                 GridLayout gridLayout = findViewById(R.id.gridLayout);
 
                 gridLayout.removeView(letter.getImage());
@@ -357,7 +389,7 @@ public class MainActivity extends AppCompatActivity {
                 //letterList.remove(letter); //hata verdi
                 colCount[letter.getColumn()]++;
                 updateLetters(letter);
-            }else if(letter.isClick() && letter.isIce()==true){
+            } else if (letter.isClick() && letter.isIce() == true) {
                 letter.setIce(false);
             }
         }
@@ -462,7 +494,6 @@ public class MainActivity extends AppCompatActivity {
             randomLetter = vowel[randomNumber];
 
 
-
         } else {
             randomNumber = rand.nextInt(consonant.length);
             randomLetter = consonant[randomNumber];
@@ -480,8 +511,6 @@ public class MainActivity extends AppCompatActivity {
         letterList.add(letter);
         return letter;
     }
-
-
 
 
 }
