@@ -3,6 +3,7 @@ package com.sevvalbayramli.wordgame;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.ColorFilter;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
@@ -35,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
 
     List<Integer> letters = new ArrayList<Integer>();
     List<Letter> letterList = new ArrayList<Letter>();
+    Handler handler = new Handler();
+    Runnable myRunnable;
 
     private Set<String> wordSet;
     int[] colCount = {6, 6, 6, 6, 6, 6, 6, 6};
@@ -42,6 +45,11 @@ public class MainActivity extends AppCompatActivity {
 
     String text = "";
     int userPoint=0;
+    String point="0";
+    boolean flag=true;
+    int falseWord=0;
+
+
 
     @SuppressLint("ResourceType")
     @Override
@@ -57,16 +65,14 @@ public class MainActivity extends AppCompatActivity {
 
         createFirstLetters();
         clickControl();
-
-        createNewItemPeriodically(500);
-
-
-
+        createNewItemPeriodically(5000);
 
         cancel_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 editText(textView);
+
+
             }
         });
         submit_button.setOnClickListener(new View.OnClickListener() {
@@ -75,12 +81,15 @@ public class MainActivity extends AppCompatActivity {
                 if (wordSet.contains(text.toLowerCase())) {
                     System.out.println("Evet var");
                     editText(textView);
-                    String point=String.valueOf(userPoint);
+                    point=String.valueOf(userPoint);
                     pointText.setText(point);
 
                     deleteLetters();
                 } else {
-                    System.out.println("Hayır yok");
+                    falseWord++;
+                    if(falseWord%3==0 && falseWord!=0){
+                        System.out.println("Tüm sütunlara harfler iner");
+                    }
 
 
 
@@ -90,20 +99,44 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
-
     }
+
+    public void pointControl(){
+        if(userPoint >100 && userPoint <=200){
+            stopItem();
+            createNewItemPeriodically(4000);
+        }else if(userPoint>200 && userPoint <= 300){
+            stopItem();
+            createNewItemPeriodically(3000);
+        }else if(userPoint>300 && userPoint <= 400){
+            stopItem();
+            createNewItemPeriodically(2000);
+        }else if(userPoint>300 && userPoint <= 400){
+            stopItem();
+            createNewItemPeriodically(1000);
+        }
+    }
+
+    public void stopItem(){
+        handler.removeCallbacksAndMessages(null);
+    }
+
     public void createNewItemPeriodically(int delay) {
-        final Handler handler = new Handler();
 
         handler.postDelayed(new Runnable(){
             public void run(){
-                createOneLetter();
-                clickControl();
-                handler.postDelayed(this, delay);
+                if(flag){
+                    createOneLetter();
+                    handler.postDelayed(this, delay);
+                }
+                else{
+                    stopItem();
+                }
             }
         }, delay);
+
     }
+
 
     private void clickControl() {
         TextView textView = findViewById(R.id.textView);
@@ -131,7 +164,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     private void loadWords() {
         wordSet = new HashSet<>();
         BufferedReader reader = null;
@@ -155,37 +187,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void dropLetter() {
-        //itemler 0dan başlayıp düşüyor
-        //ama başladığında hızlı düştüğü için düşüş anı yok
-
-        Letter letter = createOneLetter();
-        GridLayout gridLayout = findViewById(R.id.gridLayout);
-        for (int i = 0; i < colCount[letter.getColumn()]; i++) {
-
-            gridLayout.removeView(letter.getImage());
-
-            GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-            params.width = 135;
-            params.height = 135;
-            params.rowSpec = GridLayout.spec(i);
-            params.columnSpec = GridLayout.spec(letter.getColumn());
-            params.setGravity(Gravity.CENTER);
-            letter.getImage().setScaleType(ImageView.ScaleType.CENTER_CROP);
-
-            gridLayout.addView(letter.getImage(), params);
-            int newIndex = (i) * gridLayout.getColumnCount() + letter.getColumn();
-
-            letter.getImage().setId(newIndex);
-            updateLetters(letter);
-            letter.setRow(i);
-            letter.setColumn(letter.getColumn());
-
-        }
-        colCount[letter.getColumn()] = colCount[letter.getColumn()] + 1;
-
-
-    }
 
     public Letter createOneLetter() {
         Letter letter = createLetters();
@@ -206,18 +207,23 @@ public class MainActivity extends AppCompatActivity {
         int index = colCount[col] * gridLayout.getColumnCount() + col;
         letter.getImage().setId(index);
         colCount[col]--;
-        if(colCount[col]<0){
-            System.out.println("oyun bitti3");
 
-            //burada skor sayfasına gidicek
-            //skor sayfasında tekrar başlama seçeneği olucak
+        clickControl();
+        if(colCount[col]<=-1){
+            System.out.println("oyun bitti "+colCount[col]);
+            flag=false;
+            Intent intent=new Intent(this, InfoPage.class);
+            intent.putExtra("score", point);
+            startActivity(intent);
+            return null;
         }
         else{
             gridLayout.addView(letter.getImage(), params);
             createAnimation(letter);
+            pointControl();
             return letter;
         }
-        return null;
+
 
 
 
@@ -239,22 +245,32 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void updateLetters(Letter letter) {//üsttekini bulup siliyor
-
+    public Letter findLetter(int a,Letter letter){
         GridLayout gridLayout = findViewById(R.id.gridLayout);
-
-        int index = (letter.getRow() - 1) * gridLayout.getColumnCount() + letter.getColumn();
+        int index = (letter.getRow() +a) * gridLayout.getColumnCount() + letter.getColumn();
         ImageView imageView = findViewById(index);
+        if(imageView==null){
+            return null;
+        }
         Letter newLetter = null;
         for (Letter findLetter : letterList) {
             if (findLetter.getImage() == imageView) {
                 newLetter = findLetter;//Bu imageviewın sahibi olan letter ı bulkuk
             }
         }
-        if (imageView == null ) {}
+
+        return newLetter;
+    }
+
+    public void updateLetters(Letter letter) {//üsttekini bulup siliyor
+
+        GridLayout gridLayout = findViewById(R.id.gridLayout);
+        Letter newLetter=findLetter(-1,letter);
+
+        if (newLetter == null ) {}
         else {
             System.out.println("girdi: " + newLetter.getLetter());
-            gridLayout.removeView(imageView);
+            gridLayout.removeView(newLetter.getImage());
 
             GridLayout.LayoutParams params = new GridLayout.LayoutParams();
             params.width = 135;
@@ -363,6 +379,7 @@ public class MainActivity extends AppCompatActivity {
         }
         Random rand = new Random();
         int randomNumber = rand.nextInt(29);
+
         Letter letter = new Letter(harfler[randomNumber]);
         ImageView imageView = new ImageView(this);
         letter.setImage(imageView);

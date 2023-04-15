@@ -1,0 +1,49 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#232323">
+
+    <!-- Oyunun bittiğini bildiren metin -->
+
+    <!-- Puanın gösterildiği alan -->
+    <TextView
+        android:id="@+id/GameOver"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="127dp"
+        android:text="GAME OVER"
+        android:textColor="#fff"
+        android:textSize="36sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/Score"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/GameOver"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:text="Your Score: 100"
+        android:textColor="#fff"
+        android:textSize="24sp" />
+
+    <!-- Tekrar oyun oynamak için metin linki -->
+    <Button
+        android:id="@+id/PlayAgain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/Score"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="268dp"
+        android:onClick="onPlayAgainClicked"
+        android:text="Play Again"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="italic" />
+
+</RelativeLayout>

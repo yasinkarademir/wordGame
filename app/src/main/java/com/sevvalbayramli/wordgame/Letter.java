@@ -10,6 +10,7 @@ public class Letter {
     private int column;
     private boolean click;
     private int point;
+    private boolean ice;
 
     public Letter(char letter) {
         this.letter = letter;
@@ -61,5 +62,13 @@ public class Letter {
 
     public void setPoint(int point) {
         this.point = point;
+    }
+
+    public boolean isIce() {
+        return ice;
+    }
+
+    public void setIce(boolean ice) {
+        this.ice = ice;
     }
 }
