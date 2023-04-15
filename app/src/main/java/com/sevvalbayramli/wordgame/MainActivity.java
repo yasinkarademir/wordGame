@@ -380,6 +380,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
     public Letter createLetters() {
         char[] harfler = {'a', 'b', 'c', 'ç', 'd', 'e', 'f', 'g', 'ğ', 'h', 'i', 'ı', 'j', 'k', 'l', 'm', 'n', 'o', 'ö', 'p', 'r', 's', 'ş', 't', 'u', 'ü', 'v', 'y', 'z'};
         int[] point = {1, 3, 4, 4, 3, 1, 7, 5, 8, 5, 2, 1, 10, 1, 1, 2, 1, 2, 7, 5, 1, 2, 4, 1, 2, 3, 7, 3, 4};
@@ -404,6 +405,11 @@ public class MainActivity extends AppCompatActivity {
         letterList.add(letter);
         return letter;
     }
+
+
+
+
+
 
 
 }
