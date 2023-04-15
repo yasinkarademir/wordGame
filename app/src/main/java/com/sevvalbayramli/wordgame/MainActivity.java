@@ -381,9 +381,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    public static int karakterIndexBul(char[] dizi, char karakter) {
+        for (int i = 0; i < dizi.length; i++) {
+            if (dizi[i] == karakter) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     public Letter createLetters() {
         char[] harfler = {'a', 'b', 'c', 'ç', 'd', 'e', 'f', 'g', 'ğ', 'h', 'i', 'ı', 'j', 'k', 'l', 'm', 'n', 'o', 'ö', 'p', 'r', 's', 'ş', 't', 'u', 'ü', 'v', 'y', 'z'};
+        char[] vowel = {'a', 'e', 'ı', 'i', 'o', 'ö', 'u', 'ü'};
+        char[] consonant = {'b', 'c', 'ç', 'd', 'f', 'g', 'ğ', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'r', 's', 'ş', 't', 'v', 'y', 'z'};
+
         int[] point = {1, 3, 4, 4, 3, 1, 7, 5, 8, 5, 2, 1, 10, 1, 1, 2, 1, 2, 7, 5, 1, 2, 4, 1, 2, 3, 7, 3, 4};
+
+        //puanIndexBul
+
+
         Field[] fields = R.drawable.class.getFields();
         for (int i = 0; i < fields.length; i++) {
             if (fields[i].getName().length() < 3) {
@@ -395,19 +411,32 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         Random rand = new Random();
-        int randomNumber = rand.nextInt(29);
+        int randomNumber;
+        char randomLetter;
 
-        Letter letter = new Letter(harfler[randomNumber]);
+        double randomDouble = rand.nextDouble();
+        if (randomDouble < 0.3) {
+            randomNumber = rand.nextInt(vowel.length);
+            randomLetter = vowel[randomNumber];
+
+
+        } else {
+            randomNumber = rand.nextInt(consonant.length);
+            randomLetter = consonant[randomNumber];
+        }
+
+
+        Letter letter = new Letter(randomLetter);
         ImageView imageView = new ImageView(this);
         letter.setImage(imageView);
-        letter.getImage().setImageResource(letters.get(randomNumber));
-        letter.setPoint(point[randomNumber]);
+        letter.getImage().setImageResource(letters.get(karakterIndexBul(harfler, randomLetter)));
+
+        letter.setPoint(point[karakterIndexBul(harfler, randomLetter)]);
+
+        //letter.setPoint(point[randomNumber]);
         letterList.add(letter);
         return letter;
     }
-
-
-
 
 
 
