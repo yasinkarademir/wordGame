@@ -4,9 +4,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -47,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     String point = "0";
     boolean flag = true;
     int falseWord = 0;
+    int iceCount=0;
 
 
     @SuppressLint("ResourceType")
@@ -81,7 +85,6 @@ public class MainActivity extends AppCompatActivity {
                     editText(textView);
                     point = String.valueOf(userPoint);
                     pointText.setText(point);
-
                     deleteLetters();
                 } else {
                     falseWord++;
@@ -161,7 +164,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
     private void clickControl() {
         TextView textView = findViewById(R.id.textView);
         for (Letter letter : letterList) {
@@ -212,6 +214,42 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    public void iceLetterControl(Letter letter){
+        if(iceCount%15==0 && iceCount!=0){
+            letter.setIce(true);
+            addBlackFilter(letter.getImage());
+            Letter newLetter=findLetter(+1,letter);//altındakini bulur
+            newLetter.setIce(true);
+            addBlackFilter(newLetter.getImage());
+        }else{
+            Letter newLetter=findLetter(+1,letter);//altındakini bulur
+            if(newLetter.isIce()==true){
+                letter.setIce(true);
+                addBlackFilter(letter.getImage());
+            }
+
+        }
+    }
+    public void addBlackFilter(ImageView imageView) {
+        Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+        Bitmap blackAndWhiteBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+
+        for(int i=0; i<bitmap.getWidth(); i++) {
+            for(int j=0; j<bitmap.getHeight(); j++) {
+                int pixel = bitmap.getPixel(i,j);
+                int red = Color.red(pixel);
+                int green = Color.green(pixel);
+                int blue = Color.blue(pixel);
+                int gray = (int) (red * 0.3 + green * 0.59 + blue * 0.11);
+
+                int newPixel = Color.argb(Color.alpha(pixel), gray, gray, gray);
+                blackAndWhiteBitmap.setPixel(i, j, newPixel);
+            }
+        }
+
+        imageView.setImageBitmap(blackAndWhiteBitmap);
+    }
+
     public Letter createOneLetter() {
         Letter letter = createLetters();
 
@@ -241,6 +279,8 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             return null;
         } else {
+            iceCount++;
+            iceLetterControl(letter);
             gridLayout.addView(letter.getImage(), params);
             createAnimation(letter);
             pointControl();
@@ -281,7 +321,7 @@ public class MainActivity extends AppCompatActivity {
     public void updateLetters(Letter letter) {//üsttekini bulup siliyor
 
         GridLayout gridLayout = findViewById(R.id.gridLayout);
-        Letter newLetter = findLetter(-1, letter);
+        Letter newLetter = findLetter(-1, letter);//üsttekini bulur
 
         if (newLetter == null) {
         } else {
@@ -309,7 +349,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void deleteLetters() {
         for (Letter letter : letterList) {
-            if (letter.isClick()) {
+            if (letter.isClick() && letter.isIce()!=true) {
                 GridLayout gridLayout = findViewById(R.id.gridLayout);
 
                 gridLayout.removeView(letter.getImage());
@@ -317,6 +357,8 @@ public class MainActivity extends AppCompatActivity {
                 //letterList.remove(letter); //hata verdi
                 colCount[letter.getColumn()]++;
                 updateLetters(letter);
+            }else if(letter.isClick() && letter.isIce()==true){
+                letter.setIce(false);
             }
         }
     }
@@ -380,9 +422,26 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+    public static int karakterIndexBul(char[] dizi, char karakter) {
+        for (int i = 0; i < dizi.length; i++) {
+            if (dizi[i] == karakter) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     public Letter createLetters() {
         char[] harfler = {'a', 'b', 'c', 'ç', 'd', 'e', 'f', 'g', 'ğ', 'h', 'i', 'ı', 'j', 'k', 'l', 'm', 'n', 'o', 'ö', 'p', 'r', 's', 'ş', 't', 'u', 'ü', 'v', 'y', 'z'};
+        char[] vowel = {'a', 'e', 'ı', 'i', 'o', 'ö', 'u', 'ü'};
+        char[] consonant = {'b', 'c', 'ç', 'd', 'f', 'g', 'ğ', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'r', 's', 'ş', 't', 'v', 'y', 'z'};
+
         int[] point = {1, 3, 4, 4, 3, 1, 7, 5, 8, 5, 2, 1, 10, 1, 1, 2, 1, 2, 7, 5, 1, 2, 4, 1, 2, 3, 7, 3, 4};
+
+        //puanIndexBul
+
+
         Field[] fields = R.drawable.class.getFields();
         for (int i = 0; i < fields.length; i++) {
             if (fields[i].getName().length() < 3) {
@@ -394,16 +453,35 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         Random rand = new Random();
-        int randomNumber = rand.nextInt(29);
+        int randomNumber;
+        char randomLetter;
 
-        Letter letter = new Letter(harfler[randomNumber]);
+        double randomDouble = rand.nextDouble();
+        if (randomDouble < 0.3) {
+            randomNumber = rand.nextInt(vowel.length);
+            randomLetter = vowel[randomNumber];
+
+
+
+        } else {
+            randomNumber = rand.nextInt(consonant.length);
+            randomLetter = consonant[randomNumber];
+        }
+
+
+        Letter letter = new Letter(randomLetter);
+
         ImageView imageView = new ImageView(this);
         letter.setImage(imageView);
-        letter.getImage().setImageResource(letters.get(randomNumber));
-        letter.setPoint(point[randomNumber]);
+        letter.getImage().setImageResource(letters.get(karakterIndexBul(harfler, randomLetter)));
+
+        letter.setPoint(point[karakterIndexBul(harfler, randomLetter)]);
+
         letterList.add(letter);
         return letter;
     }
+
+
 
 
 }
