@@ -3,7 +3,9 @@ package com.sevvalbayramli.wordgame;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
@@ -20,10 +22,14 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -244,6 +250,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
     public void addBlackFilter(ImageView imageView) {
         Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
         Bitmap blackAndWhiteBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
@@ -289,9 +296,14 @@ public class MainActivity extends AppCompatActivity {
             System.out.println("oyun bitti " + colCount[col]);
             flag = false;
 
+            int userScore = userPoint;
 
-            Intent intent = new Intent(this, InfoPage.class);
-            intent.putExtra("score", point);
+
+            saveHighScoreToFile(userScore);
+
+// InfoPage sınıfına geçiş yap ve skoru aktar.
+            Intent intent = new Intent(MainActivity.this, InfoPage.class);
+            intent.putExtra("score", String.valueOf(userScore));
             startActivity(intent);
 
 
@@ -495,9 +507,52 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //skor işlemleri
+    private void saveHighScoreToFile(int newScore) {
+        String fileName = "high_scores.txt";
+        List<Integer> highScores = readHighScoresFromFile();
 
+        // Yeni skoru mevcut skorlar listesine ekle
+        highScores.add(newScore);
 
+        // Skorları azalan sırayla sırala
+        Collections.sort(highScores, Collections.reverseOrder());
 
+        try {
+            FileOutputStream fos = openFileOutput(fileName, Context.MODE_PRIVATE);
+            OutputStreamWriter osw = new OutputStreamWriter(fos);
+
+            for (Integer score : highScores) {
+                osw.write(score + "\n");
+            }
+
+            osw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private List<Integer> readHighScoresFromFile() {
+        List<Integer> highScores = new ArrayList<>();
+        String fileName = "high_scores.txt";
+
+        try {
+            FileInputStream fis = openFileInput(fileName);
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader br = new BufferedReader(isr);
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                int score = Integer.parseInt(line);
+                highScores.add(score);
+            }
+
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return highScores;
+    }
 
 
 }
