@@ -37,8 +37,8 @@ import android.os.Handler;
 
 public class MainActivity extends AppCompatActivity {
 
-    List<Integer> letters = new ArrayList<Integer>();
-    List<Letter> letterList = new ArrayList<Letter>();
+    List<Integer> letters = new ArrayList<>();
+    List<Letter> letterList = new ArrayList<>();
     Handler handler = new Handler();
 
     private Set<String> wordSet;
@@ -68,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
         createFirstLetters();
         clickControl();
         createNewItemPeriodically(5000);
+
 
         cancel_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,6 +105,8 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+
     }
 
     public List<Letter> createLettersForAllColumns() {
@@ -241,27 +244,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-
-    // aşağıdaki kod null pointer exception veriyor. düzenlenmiş halini yukarıda yazdım.
-    /*
-    public void iceLetterControl(Letter letter) {
-        if (iceCount % 15 == 0 && iceCount != 0) {
-            letter.setIce(true);
-            addBlackFilter(letter.getImage());
-            Letter newLetter = findLetter(+1, letter);//altındakini bulur
-            newLetter.setIce(true);
-            addBlackFilter(newLetter.getImage());
-        } else {
-            Letter newLetter = findLetter(+1, letter);//altındakini bulur
-            if (newLetter.isIce() == true) {
-                letter.setIce(true);
-                addBlackFilter(letter.getImage());
-            }
-
-        }
-    }
-     */
     public void addBlackFilter(ImageView imageView) {
         Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
         Bitmap blackAndWhiteBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
@@ -306,9 +288,13 @@ public class MainActivity extends AppCompatActivity {
         if (colCount[col] <= -1) {
             System.out.println("oyun bitti " + colCount[col]);
             flag = false;
+
+
             Intent intent = new Intent(this, InfoPage.class);
             intent.putExtra("score", point);
             startActivity(intent);
+
+
             return null;
         } else {
             iceCount++;
@@ -441,8 +427,6 @@ public class MainActivity extends AppCompatActivity {
                 params.height = 125;
                 params.rowSpec = GridLayout.spec(i);
                 params.columnSpec = GridLayout.spec(j);
-                //params.setGravity(Gravity.CENTER);
-                //letter.getImage().setScaleType(ImageView.ScaleType.CENTER_CROP);
                 letter.setRow(i);
                 letter.setColumn(j);
                 int index = i * gridLayout.getColumnCount() + j;
@@ -470,8 +454,6 @@ public class MainActivity extends AppCompatActivity {
         char[] consonant = {'b', 'c', 'ç', 'd', 'f', 'g', 'ğ', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'r', 's', 'ş', 't', 'v', 'y', 'z'};
 
         int[] point = {1, 3, 4, 4, 3, 1, 7, 5, 8, 5, 2, 1, 10, 1, 1, 2, 1, 2, 7, 5, 1, 2, 4, 1, 2, 3, 7, 3, 4};
-
-        //puanIndexBul
 
 
         Field[] fields = R.drawable.class.getFields();
@@ -511,6 +493,11 @@ public class MainActivity extends AppCompatActivity {
         letterList.add(letter);
         return letter;
     }
+
+    //skor işlemleri
+
+
+
 
 
 }

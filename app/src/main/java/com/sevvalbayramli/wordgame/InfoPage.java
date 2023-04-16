@@ -14,16 +14,16 @@ public class InfoPage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info);
-        TextView score= findViewById(R.id.Score);
-        Button playAgain=findViewById(R.id.PlayAgain);
+        TextView score = findViewById(R.id.Score);
+        Button playAgain = findViewById(R.id.PlayAgain);
 
         Intent intent = getIntent();
 
         String point = intent.getStringExtra("score");
-        System.out.println("score:"+point);
+        System.out.println("score:" + point);
 
-        score.setText("Your Score: "+point);
-        Intent intent1=new Intent(this,MainActivity.class);
+        score.setText("Your Score: " + point);
+        Intent intent1 = new Intent(this, MainActivity.class);
         playAgain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -33,4 +33,8 @@ public class InfoPage extends AppCompatActivity {
             }
         });
     }
+
 }
+
+
+
