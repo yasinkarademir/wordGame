@@ -109,8 +109,8 @@ public class MainActivity extends AppCompatActivity {
 
                     if (falseWord % 3 == 0 && falseWord != 0) {
                         createLettersForAllColumns();
-                    }else{
-                        toastMessage(falseWord%3+". yanlış kelime girişi");
+                    } else {
+                        toastMessage(falseWord % 3 + ". yanlış kelime girişi");
                     }
 
 
@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void toastMessage(String message){
+    public void toastMessage(String message) {
         GridLayout gridLayout = findViewById(R.id.gridLayout);
         Snackbar snackbar = Snackbar.make(gridLayout, message, Snackbar.LENGTH_SHORT);
         View snackbarView = snackbar.getView();
@@ -156,16 +156,16 @@ public class MainActivity extends AppCompatActivity {
                 colCount[col]--;
                 createAnimation(letter);
                 letters.add(letter);
-            } else if(colCount[col] <= -1) {
-                    System.out.println("oyun bitti " + colCount[col]);
-                    flag = false;
-                    int userScore =Integer.parseInt(point);
-                    saveHighScoreToFile(userScore);
+            } else if (colCount[col] <= -1) {
+                System.out.println("oyun bitti " + colCount[col]);
+                flag = false;
+                int userScore = Integer.parseInt(point);
+                saveHighScoreToFile(userScore);
 
 
-                    Intent intent = new Intent(MainActivity.this, InfoPage.class);
-                    intent.putExtra("score", String.valueOf(userScore));
-                    startActivity(intent);
+                Intent intent = new Intent(MainActivity.this, InfoPage.class);
+                intent.putExtra("score", String.valueOf(userScore));
+                startActivity(intent);
             }
         }
         return letters;
@@ -260,7 +260,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        if (iceCount % 15 == 0 && iceCount != 0) {
+        if (iceCount % 2 == 0 && iceCount != 0) {
             letter.setIce(true);
             addBlackFilter(letter.getImage());
             Letter newLetter = findLetter(+1, letter); // altındakini bulur
@@ -321,7 +321,7 @@ public class MainActivity extends AppCompatActivity {
         if (colCount[col] <= -1) {
             System.out.println("oyun bitti " + colCount[col]);
             flag = false;
-            int userScore =Integer.parseInt(point);
+            int userScore = Integer.parseInt(point);
             saveHighScoreToFile(userScore);
 
 // InfoPage sınıfına geçiş yap ve skoru aktar.
@@ -401,6 +401,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void deleteLetters() {
+        char[] harfler = {'a', 'b', 'c', 'ç', 'd', 'e', 'f', 'g', 'ğ', 'h', 'i', 'ı', 'j', 'k', 'l', 'm', 'n', 'o', 'ö', 'p', 'r', 's', 'ş', 't', 'u', 'ü', 'v', 'y', 'z'};
+
         for (Letter letter : letterList) {
             if (letter.isClick() && letter.isIce() != true) {
                 GridLayout gridLayout = findViewById(R.id.gridLayout);
@@ -412,6 +414,12 @@ public class MainActivity extends AppCompatActivity {
                 updateLetters(letter);
             } else if (letter.isClick() && letter.isIce() == true) {
                 letter.setIce(false);
+
+                letter.getImage().setImageResource(letters.get(karakterIndexBul(harfler, letter.getLetter())));
+                clickControl();
+                letter.setClick(false);
+                letter.getImage().clearColorFilter();
+
             }
         }
     }
@@ -520,6 +528,7 @@ public class MainActivity extends AppCompatActivity {
 
         ImageView imageView = new ImageView(this);
         letter.setImage(imageView);
+
         letter.getImage().setImageResource(letters.get(karakterIndexBul(harfler, randomLetter)));
 
         letter.setPoint(point[karakterIndexBul(harfler, randomLetter)]);
