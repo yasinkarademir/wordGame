@@ -35,6 +35,9 @@ public class InfoPage extends AppCompatActivity {
         Button exitGame = findViewById(R.id.ExitGame);
         ListView highScoreListView = findViewById(R.id.highScoreListView);
 
+        getSupportActionBar().hide();
+
+
         Intent intent = getIntent();
         String point = intent.getStringExtra("score");
         System.out.println("score:" + point);
@@ -69,7 +72,6 @@ public class InfoPage extends AppCompatActivity {
             }
         });
     }
-
 
 
     private List<String> readHighScoresFromFile() {
