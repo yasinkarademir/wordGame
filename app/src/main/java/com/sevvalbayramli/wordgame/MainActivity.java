@@ -156,7 +156,16 @@ public class MainActivity extends AppCompatActivity {
                 colCount[col]--;
                 createAnimation(letter);
                 letters.add(letter);
-            } else {
+            } else if(colCount[col] <= -1) {
+                    System.out.println("oyun bitti " + colCount[col]);
+                    flag = false;
+                    int userScore =Integer.parseInt(point);
+                    saveHighScoreToFile(userScore);
+
+
+                    Intent intent = new Intent(MainActivity.this, InfoPage.class);
+                    intent.putExtra("score", String.valueOf(userScore));
+                    startActivity(intent);
             }
         }
         return letters;
