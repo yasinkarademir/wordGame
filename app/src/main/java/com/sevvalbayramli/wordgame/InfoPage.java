@@ -3,6 +3,7 @@ package com.sevvalbayramli.wordgame;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -57,6 +58,7 @@ public class InfoPage extends AppCompatActivity {
                 clearHighScoresFile();
                 highScores.clear();
                 adapter.notifyDataSetChanged();
+
             }
         });
 
@@ -67,6 +69,8 @@ public class InfoPage extends AppCompatActivity {
             }
         });
     }
+
+
 
     private List<String> readHighScoresFromFile() {
         List<String> highScores = new ArrayList<>();

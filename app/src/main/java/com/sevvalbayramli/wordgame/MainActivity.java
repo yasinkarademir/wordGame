@@ -14,9 +14,11 @@ import android.graphics.ColorMatrixColorFilter;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -39,6 +41,9 @@ import android.widget.TextView;
 
 
 import android.os.Handler;
+import android.widget.Toast;
+
+import com.google.android.material.snackbar.Snackbar;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -94,15 +99,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (wordSet.contains(text.toLowerCase())) {
-                    System.out.println("Evet var");
+                    toastMessage("Başarılı");
                     editText(textView);
                     point = String.valueOf(userPoint);
                     pointText.setText(point);
                     deleteLetters();
                 } else {
                     falseWord++;
+
                     if (falseWord % 3 == 0 && falseWord != 0) {
                         createLettersForAllColumns();
+                    }else{
+                        toastMessage(falseWord%3+". yanlış kelime girişi");
                     }
 
 
@@ -114,6 +122,17 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+    public void toastMessage(String message){
+        GridLayout gridLayout = findViewById(R.id.gridLayout);
+        Snackbar snackbar = Snackbar.make(gridLayout, message, Snackbar.LENGTH_SHORT);
+        View snackbarView = snackbar.getView();
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) snackbarView.getLayoutParams();
+        params.gravity = Gravity.TOP;
+        snackbarView.setLayoutParams(params);
+        snackbar.show();
+    }
+
 
     public List<Letter> createLettersForAllColumns() {
         List<Letter> letters = new ArrayList<>();
@@ -138,7 +157,6 @@ public class MainActivity extends AppCompatActivity {
                 createAnimation(letter);
                 letters.add(letter);
             } else {
-                System.out.println("Sütun dolu: " + col);
             }
         }
         return letters;
@@ -228,7 +246,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     public void iceLetterControl(Letter letter) {
         if (letter == null) {
             return;
@@ -295,10 +312,7 @@ public class MainActivity extends AppCompatActivity {
         if (colCount[col] <= -1) {
             System.out.println("oyun bitti " + colCount[col]);
             flag = false;
-
-            int userScore = userPoint;
-
-
+            int userScore =Integer.parseInt(point);
             saveHighScoreToFile(userScore);
 
 // InfoPage sınıfına geçiş yap ve skoru aktar.
@@ -449,7 +463,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-
 
     public static int karakterIndexBul(char[] dizi, char karakter) {
         for (int i = 0; i < dizi.length; i++) {
