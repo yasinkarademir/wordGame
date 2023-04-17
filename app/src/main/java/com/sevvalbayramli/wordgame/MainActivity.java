@@ -260,7 +260,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        if (iceCount % 2 == 0 && iceCount != 0) {
+        if (iceCount % 15 == 0 && iceCount != 0) {
             letter.setIce(true);
             addBlackFilter(letter.getImage());
             Letter newLetter = findLetter(+1, letter); // altındakini bulur
