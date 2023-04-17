@@ -70,14 +70,15 @@
         android:id="@+id/pointText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#FFA500"
+        android:background="@drawable/rounded_border"
+        android:padding="8dp"
         android:fontFamily="sans-serif-light"
         android:shadowColor="#000000"
         android:shadowDx="2"
         android:shadowDy="2"
         android:shadowRadius="2"
         android:text="0"
-
+        android:textColor="#FFFFFF"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -86,5 +87,32 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.044" />
+
+
+
+
+    <!--
+        <TextView
+            android:id="@+id/pointText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#FFA500"
+            android:fontFamily="sans-serif-light"
+            android:shadowColor="#000000"
+            android:shadowDx="2"
+            android:shadowDy="2"
+            android:shadowRadius="2"
+            android:text="0"
+
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.954"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.044" />
+
+    -->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

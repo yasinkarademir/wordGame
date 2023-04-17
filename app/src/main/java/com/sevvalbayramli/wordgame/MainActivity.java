@@ -3,7 +3,9 @@ package com.sevvalbayramli.wordgame;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
@@ -12,18 +14,24 @@ import android.graphics.ColorMatrixColorFilter;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -33,12 +41,15 @@ import android.widget.TextView;
 
 
 import android.os.Handler;
+import android.widget.Toast;
+
+import com.google.android.material.snackbar.Snackbar;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    List<Integer> letters = new ArrayList<Integer>();
-    List<Letter> letterList = new ArrayList<Letter>();
+    List<Integer> letters = new ArrayList<>();
+    List<Letter> letterList = new ArrayList<>();
     Handler handler = new Handler();
 
     private Set<String> wordSet;
@@ -50,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
     String point = "0";
     boolean flag = true;
     int falseWord = 0;
-    int iceCount=0;
+    int iceCount = 0;
 
 
     @SuppressLint("ResourceType")
@@ -69,10 +80,17 @@ public class MainActivity extends AppCompatActivity {
         clickControl();
         createNewItemPeriodically(5000);
 
+
         cancel_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 editText(textView);
+
+                //Burada tüm harflerin rengini sıfırlıyorum
+                for (Letter letter : letterList) {
+                    letter.getImage().setColorFilter(null);
+                    letter.setClick(false);
+                }
 
 
             }
@@ -81,15 +99,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (wordSet.contains(text.toLowerCase())) {
-                    System.out.println("Evet var");
+                    toastMessage("Başarılı");
                     editText(textView);
                     point = String.valueOf(userPoint);
                     pointText.setText(point);
                     deleteLetters();
                 } else {
                     falseWord++;
+
                     if (falseWord % 3 == 0 && falseWord != 0) {
                         createLettersForAllColumns();
+                    }else{
+                        toastMessage(falseWord%3+". yanlış kelime girişi");
                     }
 
 
@@ -98,7 +119,20 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+
     }
+
+    public void toastMessage(String message){
+        GridLayout gridLayout = findViewById(R.id.gridLayout);
+        Snackbar snackbar = Snackbar.make(gridLayout, message, Snackbar.LENGTH_SHORT);
+        View snackbarView = snackbar.getView();
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) snackbarView.getLayoutParams();
+        params.gravity = Gravity.TOP;
+        snackbarView.setLayoutParams(params);
+        snackbar.show();
+    }
+
 
     public List<Letter> createLettersForAllColumns() {
         List<Letter> letters = new ArrayList<>();
@@ -122,8 +156,16 @@ public class MainActivity extends AppCompatActivity {
                 colCount[col]--;
                 createAnimation(letter);
                 letters.add(letter);
-            } else {
-                System.out.println("Sütun dolu: " + col);
+            } else if(colCount[col] <= -1) {
+                    System.out.println("oyun bitti " + colCount[col]);
+                    flag = false;
+                    int userScore =Integer.parseInt(point);
+                    saveHighScoreToFile(userScore);
+
+
+                    Intent intent = new Intent(MainActivity.this, InfoPage.class);
+                    intent.putExtra("score", String.valueOf(userScore));
+                    startActivity(intent);
             }
         }
         return letters;
@@ -213,30 +255,35 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void iceLetterControl(Letter letter) {
+        if (letter == null) {
+            return;
+        }
 
-    public void iceLetterControl(Letter letter){
-        if(iceCount%15==0 && iceCount!=0){
+        if (iceCount % 15 == 0 && iceCount != 0) {
             letter.setIce(true);
             addBlackFilter(letter.getImage());
-            Letter newLetter=findLetter(+1,letter);//altındakini bulur
-            newLetter.setIce(true);
-            addBlackFilter(newLetter.getImage());
-        }else{
-            Letter newLetter=findLetter(+1,letter);//altındakini bulur
-            if(newLetter.isIce()==true){
+            Letter newLetter = findLetter(+1, letter); // altındakini bulur
+            if (newLetter != null) {
+                newLetter.setIce(true);
+                addBlackFilter(newLetter.getImage());
+            }
+        } else {
+            Letter newLetter = findLetter(+1, letter); // altındakini bulur
+            if (newLetter != null && newLetter.isIce()) {
                 letter.setIce(true);
                 addBlackFilter(letter.getImage());
             }
-
         }
     }
+
     public void addBlackFilter(ImageView imageView) {
         Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
         Bitmap blackAndWhiteBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
 
-        for(int i=0; i<bitmap.getWidth(); i++) {
-            for(int j=0; j<bitmap.getHeight(); j++) {
-                int pixel = bitmap.getPixel(i,j);
+        for (int i = 0; i < bitmap.getWidth(); i++) {
+            for (int j = 0; j < bitmap.getHeight(); j++) {
+                int pixel = bitmap.getPixel(i, j);
                 int red = Color.red(pixel);
                 int green = Color.green(pixel);
                 int blue = Color.blue(pixel);
@@ -274,9 +321,15 @@ public class MainActivity extends AppCompatActivity {
         if (colCount[col] <= -1) {
             System.out.println("oyun bitti " + colCount[col]);
             flag = false;
-            Intent intent = new Intent(this, InfoPage.class);
-            intent.putExtra("score", point);
+            int userScore =Integer.parseInt(point);
+            saveHighScoreToFile(userScore);
+
+// InfoPage sınıfına geçiş yap ve skoru aktar.
+            Intent intent = new Intent(MainActivity.this, InfoPage.class);
+            intent.putExtra("score", String.valueOf(userScore));
             startActivity(intent);
+
+
             return null;
         } else {
             iceCount++;
@@ -349,7 +402,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void deleteLetters() {
         for (Letter letter : letterList) {
-            if (letter.isClick() && letter.isIce()!=true) {
+            if (letter.isClick() && letter.isIce() != true) {
                 GridLayout gridLayout = findViewById(R.id.gridLayout);
 
                 gridLayout.removeView(letter.getImage());
@@ -357,7 +410,7 @@ public class MainActivity extends AppCompatActivity {
                 //letterList.remove(letter); //hata verdi
                 colCount[letter.getColumn()]++;
                 updateLetters(letter);
-            }else if(letter.isClick() && letter.isIce()==true){
+            } else if (letter.isClick() && letter.isIce() == true) {
                 letter.setIce(false);
             }
         }
@@ -409,8 +462,6 @@ public class MainActivity extends AppCompatActivity {
                 params.height = 125;
                 params.rowSpec = GridLayout.spec(i);
                 params.columnSpec = GridLayout.spec(j);
-                //params.setGravity(Gravity.CENTER);
-                //letter.getImage().setScaleType(ImageView.ScaleType.CENTER_CROP);
                 letter.setRow(i);
                 letter.setColumn(j);
                 int index = i * gridLayout.getColumnCount() + j;
@@ -421,7 +472,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-
 
     public static int karakterIndexBul(char[] dizi, char karakter) {
         for (int i = 0; i < dizi.length; i++) {
@@ -438,8 +488,6 @@ public class MainActivity extends AppCompatActivity {
         char[] consonant = {'b', 'c', 'ç', 'd', 'f', 'g', 'ğ', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'r', 's', 'ş', 't', 'v', 'y', 'z'};
 
         int[] point = {1, 3, 4, 4, 3, 1, 7, 5, 8, 5, 2, 1, 10, 1, 1, 2, 1, 2, 7, 5, 1, 2, 4, 1, 2, 3, 7, 3, 4};
-
-        //puanIndexBul
 
 
         Field[] fields = R.drawable.class.getFields();
@@ -462,7 +510,6 @@ public class MainActivity extends AppCompatActivity {
             randomLetter = vowel[randomNumber];
 
 
-
         } else {
             randomNumber = rand.nextInt(consonant.length);
             randomLetter = consonant[randomNumber];
@@ -481,7 +528,53 @@ public class MainActivity extends AppCompatActivity {
         return letter;
     }
 
+    //skor işlemleri
+    private void saveHighScoreToFile(int newScore) {
+        String fileName = "high_scores.txt";
+        List<Integer> highScores = readHighScoresFromFile();
 
+        // Yeni skoru mevcut skorlar listesine ekle
+        highScores.add(newScore);
+
+        // Skorları azalan sırayla sırala
+        Collections.sort(highScores, Collections.reverseOrder());
+
+        try {
+            FileOutputStream fos = openFileOutput(fileName, Context.MODE_PRIVATE);
+            OutputStreamWriter osw = new OutputStreamWriter(fos);
+
+            for (Integer score : highScores) {
+                osw.write(score + "\n");
+            }
+
+            osw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private List<Integer> readHighScoresFromFile() {
+        List<Integer> highScores = new ArrayList<>();
+        String fileName = "high_scores.txt";
+
+        try {
+            FileInputStream fis = openFileInput(fileName);
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader br = new BufferedReader(isr);
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                int score = Integer.parseInt(line);
+                highScores.add(score);
+            }
+
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return highScores;
+    }
 
 
 }
