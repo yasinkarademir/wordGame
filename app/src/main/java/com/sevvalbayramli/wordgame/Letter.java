@@ -1,6 +1,5 @@
 package com.sevvalbayramli.wordgame;
 
-import android.widget.ImageButton;
 import android.widget.ImageView;
 
 public class Letter {
