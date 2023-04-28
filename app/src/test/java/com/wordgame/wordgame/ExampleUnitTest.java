@@ -1,4 +1,4 @@
-package com.sevvalbayramli.wordgame;
+package com.wordgame.wordgame;
 
 import org.junit.Test;
 

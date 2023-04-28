@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.sevvalbayramli.wordgame">
+    package="com.wordgame.wordgame">
 
     <application
         android:allowBackup="true"
@@ -10,11 +10,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WordGame">
         <activity
-            android:name=".InfoPage"
+            android:name="com.wordgame.wordgame.InfoPage"
             android:exported="false" />
         <!-- Splash screen activity -->
         <activity
-            android:name=".Start"
+            android:name="com.wordgame.wordgame.Start"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,7 +23,7 @@
             </intent-filter>
         </activity> <!-- Main activity -->
         <activity
-            android:name=".MainActivity"
+            android:name="com.wordgame.wordgame.MainActivity"
             android:exported="true" />
     </application>
 
