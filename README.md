@@ -34,5 +34,9 @@ Oyuncuya son oynadığı oyunda elde ettiği puanın gösterildiği ve eski puan
 
 
 
-https://user-images.githubusercontent.com/78160747/235266416-c8af7dd6-7d0f-484c-9f66-992daf172f4b.mp4
+https://user-images.githubusercontent.com/78160747/235303432-09d37f73-b132-457e-aed3-05d1fd7df338.mp4
+
+
+
+
 
